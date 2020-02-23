@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>关于 | Dr. Song OuYang</title>
+<title>R安装Github包 | Dr. Song OuYang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,15 +18,13 @@
 
 
 
-    <meta name="description" content="
-欢迎来到我的小站呀，很高兴遇见你！🤝
+    <meta name="description" content="##一、代码安装：
+######1.R安装devtools包
+install.packages(&quot;devtools&quot;)
+library(devtools)
 
-🏠 关于本站
-👨‍💻 博主是谁
-⛹ 兴趣爱好
-📬 联系我呀
-..." />
-    <meta name="keywords" content="" />
+######2.安装github上的R包（需翻墙或改hosts..." />
+    <meta name="keywords" content="R" />
   </head>
   <body>
     <div id="app" class="main">
@@ -110,20 +108,64 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">关于</h2>
-            <div class="post-date">2019-01-25</div>
+            <h2 class="post-title">R安装Github包</h2>
+            <div class="post-date">2020-02-24</div>
             
             <div class="post-content" v-pre>
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+              <p>##一、代码安装：<br>
+######1.R安装<code>devtools</code>包</p>
+<pre><code class="language-{r}">install.packages(&quot;devtools&quot;)
+library(devtools)
+</code></pre>
+<p>######2.安装<code>github</code>上的R包（需翻墙或改hosts）</p>
+<pre><code class="language-{r}">devtools::install_github('lchiffon/REmap')
+#q前为github的用户名，后为包名
+</code></pre>
+<p>######3.测试</p>
+<pre><code class="language-{r}">library(REmap)
+</code></pre>
+<hr>
+<p>##二、本地安装<br>
+在<code>github.com</code>上直接下载<code>xx-master.zip</code>,将zip文件解压成文件夹<code>XX-master</code>，输入命令</p>
+<pre><code class="language-{r}">install.packages(&quot;D:/nCov2019-master&quot;,repos=NULL,type=&quot;source&quot;)
+
+* installing *source* package 'nCov2019' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package 'nCov2019'
+    finding HTML links ... 好了
+    get_nCov2019                            html  
+    load_nCov2019                           html  
+** building package indices
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (nCov2019)
+</code></pre>
 
             </div>
             
+              <div class="tag-container">
+                
+                  <a href="https://swcyo.github.io/tag/https://www.jianshu.com/u/c23f6285abcc/" class="tag">
+                    R
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://swcyo.github.io/post/2019-ncov-yi-qing-di-tu-dong-tai-ke-shi-hua/">
+                  <h3 class="post-title">
+                    2019-nCoV疫情地图动态可视化
+                  </h3>
+                </a>
+              </div>
             
 
             

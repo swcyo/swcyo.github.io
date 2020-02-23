@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>R安装包`nCoV`DIY版画疫情地图 | Dr. Song OuYang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://swcyo.github.io/favicon.ico?v=1582484251797">
+<link rel="stylesheet" href="https://swcyo.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="最近Y叔叔的nCoV包火了，可谓是包罗万象，操作简单。但因为是打包安装，所以作图也被限制了，如只能显示确诊病例，无法显示疑似病例、死亡病例和治愈人数。因此我在原安装包的基础上做了适当修改，现分享一下过程：
+一、安装
+因为是DIY包，所以需要..." />
+    <meta name="keywords" content="R" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://swcyo.github.io">
+        <img src="https://swcyo.github.io/images/avatar.png?v=1582484251797" class="site-logo">
+        <h1 class="site-title">Dr. Song OuYang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://swcyo.github.io" class="site-nav" target="_blank">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="http://github.com/swcyo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+          <a class="social-link" href="http://weibo.com/swcyo" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/swcyo" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Song OuYang's Blog
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/swcyo" target="_blank">swcyo</a>
+<div itemscope itemtype="https://schema.org/Person"><a itemprop="sameAs" content="https://orcid.org/0000-0001-7962-2811" href="https://orcid.org/0000-0001-7962-2811" target="orcid.widget" rel="me noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">https://orcid.org/0000-0001-7962-2811</a></div> | <a class="rss" href="https://swcyo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">R安装包`nCoV`DIY版画疫情地图</h2>
+            <div class="post-date">2020-02-24</div>
+            
+            <div class="post-content" v-pre>
+              <p>最近Y叔叔的<code>nCoV</code>包火了，可谓是包罗万象，操作简单。但因为是打包安装，所以作图也被限制了，如<code>只能显示确诊病例</code>，无法显示疑似病例、死亡病例和治愈人数。因此我在原安装包的基础上做了适当修改，现分享一下过程：</p>
+<h2 id="一-安装">一、安装</h2>
+<p>因为是DIY包，所以需要先下载安装文件，地址在这 https://share.weiyun.com/5S71Uxj<br>
+解压到本地文件夹，如D盘，安装代码如下</p>
+<pre><code class="language-{r}">install.packages(&quot;D:/nCov2019-master&quot;,repos=NULL,type=&quot;source&quot;)
+#出现* DONE (nCov2019)的时候就代表安装成功了
+</code></pre>
+<h2 id="二-加载">二、加载</h2>
+<pre><code class="language-{r}">library(nCov2019)
+#不报错就说明加载成功
+</code></pre>
+<h2 id="三-开工">三、开工</h2>
+<pre><code class="language-{r}">#先定义下函数
+x&lt;-get_nCov2019
+#现看一下实时的确切病例数及更新时间
+ x
+#China (total confirmed cases): 34627
+#last update: 2020-02-08 14:21:01 
+</code></pre>
+<h3 id="四-简单到令人发指的作图">四、简单到令人发指的作图</h3>
+<ul>
+<li>先来个全世界的，不过数据不是很准，毕竟不是谁都肯共享数据，比如自私的<code>美国</code></li>
+</ul>
+<pre><code class="language-{r}">plot(x)
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://upload-images.jianshu.io/upload_images/20725105-177a0652ea3f32b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="wolrd" loading="lazy"></figure>
+<ul>
+<li>重点是我们中国，首先需要加载Y叔叔的<code>chinamap</code>包<br>
+先下载 <a href="https://links.jianshu.com/go?to=https%3A%2F%2Fshare.weiyun.com%2F5FgrHT0">https://share.weiyun.com/5FgrHT0</a>，然后压缩到D盘</li>
+</ul>
+<pre><code class="language-{r}">install.packages(&quot;D:/chinamap-master&quot;,repos=NULL,type=&quot;source&quot;)
+#出现* DONE (chinamap)的时候就代表安装成功了
+library(chinamap)
+</code></pre>
+<p>定义一下，需要加载<code>sp</code>安装包，没有的安装一下就行，这个<code>CRAN</code>上就有</p>
+<pre><code class="language-{r}">cn=get_map_china() 
+</code></pre>
+<p>开始画图了，先来个世界角度看中国</p>
+<pre><code class="language-{r}">plot(x,chinamap=cn)
+</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/20725105-97fb4ed20033dc0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="世界角度看中国" loading="lazy"><br>
+去掉世界，专注中国</p>
+<pre><code class="language-{r}">plot(x,chinamap=cn)
+</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/20725105-3fdff1e7cfb23926.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="china" loading="lazy"><br>
+换种离散型填充分类</p>
+<pre><code class="language-{r}">plot(x,chinamap=cn,continuous_scale=F)
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://upload-images.jianshu.io/upload_images/20725105-15c67b96f3003304.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="china" loading="lazy"></figure>
+<p>红色看的太显眼，前几天纪念李医生都变黑，我们就换个灰色的纪念一下所有一线医护人员吧</p>
+<pre><code class="language-{r}">plot(x,chinamap=cn,palette=&quot;Greys&quot;)
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://upload-images.jianshu.io/upload_images/20725105-a589a501b6d050a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="china-grey" loading="lazy"></figure>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://swcyo.github.io/tag/https://www.jianshu.com/u/c23f6285abcc/" class="tag">
+                    R
+                  </a>
+                
+              </div>
+            
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>

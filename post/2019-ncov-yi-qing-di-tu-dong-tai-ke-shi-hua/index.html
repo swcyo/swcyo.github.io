@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>2019-nCoV疫情地图动态可视化 | Dr. Song OuYang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://swcyo.github.io/favicon.ico?v=1582484251797">
+<link rel="stylesheet" href="https://swcyo.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="来自 https://mp.weixin.qq.com/s/9IrY9kajZG2SJcoewUVH8w
+
+
+1 简介
+
+
+数据介绍:
+该数据是从丁香园·丁香医生通过爬虫获取的全国2019-ncov病毒的感染病例。
+时间的分辨率：1小时
+空..." />
+    <meta name="keywords" content="R" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://swcyo.github.io">
+        <img src="https://swcyo.github.io/images/avatar.png?v=1582484251797" class="site-logo">
+        <h1 class="site-title">Dr. Song OuYang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://swcyo.github.io" class="site-nav" target="_blank">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="http://github.com/swcyo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+          <a class="social-link" href="http://weibo.com/swcyo" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/swcyo" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Song OuYang's Blog
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/swcyo" target="_blank">swcyo</a>
+<div itemscope itemtype="https://schema.org/Person"><a itemprop="sameAs" content="https://orcid.org/0000-0001-7962-2811" href="https://orcid.org/0000-0001-7962-2811" target="orcid.widget" rel="me noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">https://orcid.org/0000-0001-7962-2811</a></div> | <a class="rss" href="https://swcyo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">2019-nCoV疫情地图动态可视化</h2>
+            <div class="post-date">2020-02-24</div>
+            
+            <div class="post-content" v-pre>
+              <p>来自 <a href="https://mp.weixin.qq.com/s/9IrY9kajZG2SJcoewUVH8w">https://mp.weixin.qq.com/s/9IrY9kajZG2SJcoewUVH8w</a></p>
+<ul>
+<li>
+<h1 id="1-简介">1 简介</h1>
+</li>
+</ul>
+<p>数据介绍:<br>
+该数据是从丁香园·丁香医生通过爬虫获取的全国2019-ncov病毒的感染病例。<br>
+时间的分辨率：1小时<br>
+空间分辨率：城市和省份<br>
+起止时间：从2020/1/25/17时到疫情结束</p>
+<ul>
+<li>
+<h1 id="2-需要的包">2 需要的包</h1>
+</li>
+</ul>
+<pre><code>devtools::install_github(&quot;microly/alimap&quot;)
+</code></pre>
+<pre><code>library(alimap) # to get China map at the prefecture city level
+library(sf)
+library(ggplot2)
+library(dplyr)
+library(tibble)
+library(tidyr)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(gganimate)
+library(lubridate)
+library(Cairo)
+library(magick)
+</code></pre>
+<ul>
+<li>
+<h1 id="3-地图数据">3 地图数据</h1>
+</li>
+</ul>
+<p>如果有本地数据，可以自行读取。<br>
+因为很多市级地名存在变化，<br>
+而且爬取的比较乱，部分没有“市”这个字，<br>
+所以使用前2个汉字进行联结表。以地图数据集中的城市名为准。</p>
+<pre><code>Chinamap_cities_sf &lt;- map_prefecture_city() %&gt;% 
+  mutate(c2 = str_sub(name, 1, 2))
+</code></pre>
+<ul>
+<li>
+<h1 id="4-时间序列">4 时间序列</h1>
+</li>
+</ul>
+<p>每12小时更新1次，从早上9点到晚上9点。</p>
+<pre><code># set start day
+startTime &lt;- ymd_h(&quot;2020/1/25 21&quot;)
+nowTime &lt;- Sys.time() %&gt;% with_tz(tz = &quot;Asia/Shanghai&quot;) # only support Shanghai timezone
+endTime &lt;- if(hour(nowTime) &gt; 21) {
+  date(nowTime) + dhours(21)
+} else if (hour(nowTime) &gt; 9){
+  date(nowTime) + dhours(9)
+} else {
+  date(nowTime) - ddays(1) + dhours(21)
+}
+
+timeLength &lt;- interval(startTime, endTime) %&gt;% 
+  time_length(&quot;hour&quot;) %&gt;% `/`(12)
+# time sequence
+mytime &lt;- startTime + dhours(12*(0:timeLength)) %&gt;% .[-6] # 404 at the time
+mymonth &lt;- month(mytime)
+myday &lt;- day(mytime)
+myhour &lt;- hour(mytime) %&gt;% as.character() %&gt;% 
+  str_pad(width = 2, side = &quot;left&quot;, pad = &quot;0&quot;) # make character string same length
+
+myAPI &lt;- paste(date(mytime), myhour, sep = &quot;T&quot;)
+</code></pre>
+<ul>
+<li>
+<h1 id="5-疫情数据">5 疫情数据</h1>
+</li>
+</ul>
+<p>通过API接口读取疫情历史数据，API接口由网友提供，爬取自丁香园。</p>
+<pre><code># define a function to read epidemic data of a day
+read_epidemic &lt;- function(oneAPI) {
+  url_API &lt;- paste0(&quot;http://69.171.70.18:5000/download/city_level_&quot;, oneAPI, &quot;.csv&quot;)
+  epidemic_df &lt;- read_csv(file = url_API)
+  colnames(epidemic_df) &lt;- c(&quot;x1&quot;,&quot;unnamed&quot;, &quot;city&quot;, &quot;confirmed_c&quot;, &quot;suspected_c&quot;,
+                             &quot;cured_c&quot;, &quot;dead_c&quot;, &quot;province&quot;, &quot;short_p&quot;, &quot;confirmed_p&quot;,
+                             &quot;suspected_p&quot;, &quot;cured_p&quot;, &quot;dead_p&quot;, &quot;comment&quot;)
+  epidemic_df %&lt;&gt;% select(city, confirmed_c)
+  return(epidemic_df)
+}
+  
+  
+epidemic_nest &lt;- tibble(time = mytime,
+                        myAPI = myAPI) %&gt;% 
+  mutate(., data = map(.$myAPI, ~read_epidemic(.x))) %&gt;% 
+  select(-myAPI) %&gt;% unnest()
+</code></pre>
+<ul>
+<li>
+<h3 id="51-分箱">5.1 分箱</h3>
+</li>
+</ul>
+<p>因为很多市级地名存在变化，<br>
+而且爬取的比较乱，部分没有“市”这个字，<br>
+所以使用前2个汉字进行联结表。以地图数据集中的城市名为准。</p>
+<pre><code>mybreaks &lt;- c(0, 1, 10, 50, 100, 500, 1000, 5000, 100000)
+mylabels &lt;- c(&quot;0&quot;, &quot;1-9&quot;, &quot;10-49&quot;, &quot;50-99&quot;, &quot;100-499&quot;,
+              &quot;500-999&quot;, &quot;1000-4999&quot;, &quot;&gt;=5000&quot;)
+
+epidemic_df &lt;- epidemic_nest %&gt;% 
+  mutate(conf2 = cut(confirmed_c, breaks = mybreaks,
+                     labels = mylabels, include.lowest = TRUE,
+                     right = FALSE, ordered_result = TRUE)) %&gt;% 
+  mutate(c2 = str_sub(city, 1, 2))
+</code></pre>
+<ul>
+<li>
+<h1 id="6-联结表及循环绘图">6 联结表及循环绘图</h1>
+</li>
+</ul>
+<pre><code># create temporary document
+dir.create(dir1 &lt;- file.path(tempdir(), &quot;testdir&quot;))
+
+for (i in 1:length(mytime)) {
+  # join epidemic data with map data
+  epidemic_time &lt;- epidemic_df %&gt;% filter(time == mytime[i])
+  epidemic_city &lt;- Chinamap_cities_sf %&gt;% left_join(epidemic_time, by = &quot;c2&quot;)
+  # treatment NA
+  conf2 &lt;- epidemic_city$conf2 %&gt;% replace_na(0)
+  epidemic_city %&lt;&gt;% select(-c2, -city, -conf2)
+  epidemic_city$conf2 &lt;- conf2
+
+  # plot
+  gg_epidemic &lt;-  ggplot(epidemic_city) + 
+    geom_sf(aes(fill = conf2)) + 
+    coord_sf() + 
+    scale_fill_brewer(palette = &quot;YlOrRd&quot;, direction = 1) + 
+    guides(fill = guide_legend(title = &quot;确诊人数&quot;, reverse = T)) + 
+    labs(title = &quot;2019-ncov疫情数据可视化&quot;,
+        subtitle = mytime[i],
+        caption = &quot;数据来源：丁香园·丁香医生&quot;) + 
+    theme(
+      # 标题
+      plot.title = element_text(face = &quot;bold&quot;, hjust = 0.5,
+                                color = &quot;black&quot;),
+      plot.subtitle = element_text(face = &quot;bold&quot;, hjust = 0.5, size = 20,
+                                color = &quot;red&quot;),
+      plot.caption = element_text(face = &quot;bold&quot;, hjust = 1,
+                                color = &quot;blue&quot;),
+      # 图例
+      legend.title = element_text(face = &quot;bold&quot;,
+                                  color = &quot;black&quot;),
+      legend.text = element_text(face = &quot;bold&quot;,
+                                 color = &quot;black&quot;),
+      legend.background = element_rect(colour = &quot;black&quot;),
+      legend.key = element_rect(fill = NA), # 图例箱体无背景
+      legend.position = c(0.85, 0.2),
+      axis.ticks = element_blank(),
+      axis.text = element_blank(),
+      # 绘图面板
+      panel.background = element_blank(),
+      panel.border = element_rect(color = &quot;black&quot;, linetype = &quot;solid&quot;, size = 1, fill = NA)
+      )
+  
+  # save picture
+  ggsave(filename = paste0(date(mytime[i]), &quot;_&quot;, hour(mytime[i]), &quot;.png&quot;),
+         plot = gg_epidemic, path = dir1,
+         width = 20, height = 20, units = &quot;cm&quot;)
+}
+</code></pre>
+<ul>
+<li>
+<h1 id="7-动画">7 动画</h1>
+</li>
+</ul>
+<pre><code>path_pre &lt;- &quot;./&quot;
+animate_epidemic &lt;- 
+  image_animate(image = image_read(path = paste0(dir1, &quot;/&quot;,
+                                            date(mytime), &quot;_&quot;, hour(mytime), &quot;.png&quot;)))
+anim_save(filename = &quot;疫情地图可视化动态图.gif&quot;,
+          animation = animate_epidemic, path = path_pre)
+
+unlink(dir1)
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://upload-images.jianshu.io/upload_images/20725105-a72475e13445b93c.gif?imageMogr2/auto-orient/strip" alt="2019-nCoV疫情地图动态可视化" loading="lazy"></figure>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://swcyo.github.io/tag/https://www.jianshu.com/u/c23f6285abcc/" class="tag">
+                    R
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://swcyo.github.io/post/r-an-zhuang-bao-ncovdiy-ban-hua-yi-qing-di-tu/">
+                  <h3 class="post-title">
+                    R安装包`nCoV`DIY版画疫情地图
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>

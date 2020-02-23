@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>R绘制箱图（Boxplot） | Dr. Song OuYang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://swcyo.github.io/favicon.ico?v=1582484251797">
+<link rel="stylesheet" href="https://swcyo.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="##需要的文件格式
+制表符的txt、csv格式，Excel也可以，但需要加载xlxs包
+install.packages(&quot;xlsx&quot;) #安装xlxs包
+
+读取目标表格
+group &lt;-read.table(&q..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://swcyo.github.io">
+        <img src="https://swcyo.github.io/images/avatar.png?v=1582484251797" class="site-logo">
+        <h1 class="site-title">Dr. Song OuYang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://swcyo.github.io" class="site-nav" target="_blank">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="http://github.com/swcyo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+          <a class="social-link" href="http://weibo.com/swcyo" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/swcyo" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Song OuYang's Blog
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/swcyo" target="_blank">swcyo</a>
+<div itemscope itemtype="https://schema.org/Person"><a itemprop="sameAs" content="https://orcid.org/0000-0001-7962-2811" href="https://orcid.org/0000-0001-7962-2811" target="orcid.widget" rel="me noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">https://orcid.org/0000-0001-7962-2811</a></div> | <a class="rss" href="https://swcyo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">R绘制箱图（Boxplot）</h2>
+            <div class="post-date">2020-02-24</div>
+            
+            <div class="post-content" v-pre>
+              <p>##需要的文件格式</p>
+<p>制表符的txt、csv格式，<em>Excel</em>也可以，但需要加载<code>xlxs</code>包</p>
+<pre><code class="language-{r}">install.packages(&quot;xlsx&quot;) #安装xlxs包
+</code></pre>
+<h2 id="读取目标表格">读取目标表格</h2>
+<pre><code class="language-{r}">group &lt;-read.table(&quot;boxplot.txt&quot;,header = T) #header 表示需要表头
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://upload-images.jianshu.io/upload_images/20725105-e29fcff684302d8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.png" loading="lazy"></figure>
+<h2 id="一-ggplot2作图-复杂">一、ggplot2作图  （复杂）</h2>
+<ul>
+<li>
+<h5 id="给某一个基因作图如ankle1">给某一个基因作图，如<code>ANKLE1</code></h5>
+</li>
+</ul>
+<pre><code class="language-{r}">library(ggplot2)
+#x轴是类型，Y轴是基因表达量
+ggplot(group, aes(type,ANKLE1,fill=type))+geom_boxplot()  #第一种简化代码 fill表示填充
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://upload-images.jianshu.io/upload_images/20725105-0bc7656531da8666.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.png" loading="lazy"></figure>
+<pre><code>#添加标准误
+ggplot(group, aes(stype,ANKLE1,fill=type))+stat_boxplot(geom = &quot;errorbar&quot;)+geom_boxplot()
+</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/20725105-efabc114fb88c795.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Rplot.png" loading="lazy"><br>
+另一种填色</p>
+<pre><code class="language-{r}">ggplot(group, aes(type,ANKLE1,color=type))+geom_boxplot() #第二种简化代码 color表示空白颜色
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://upload-images.jianshu.io/upload_images/20725105-beabe44749ac889d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.png" loading="lazy"></figure>
+<pre><code class="language-{r}">ggplot(group, aes(type,ANKLE1,color=type))+geom_boxplot()+geom_jitter()  #第三种简化代码 加点
+</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/20725105-a396ddea4b230d7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.png" loading="lazy"><br>
+添加标准误</p>
+<pre><code class="language-{r}">ggplot(group, aes(type,ANKLE1,color=type))+stat_boxplot(geom = &quot;errorbar&quot;)+geom_boxplot()+geom_jitter()  #第三种简化代码 加点
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="https://upload-images.jianshu.io/upload_images/20725105-1a78cd717796fe18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Rplot01.png" loading="lazy"></figure>
+<pre><code class="language-r">#给两组添加显著性标记
+library(ggsignif) #加载包
+ggplot(group,aes(type,ANKLE1,fill=type))+geom_boxplot()+geom_signif(comparisons = list(c(&quot;Normal&quot;,&quot;Tumor&quot;)))  #list 添加需要比较的组
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://upload-images.jianshu.io/upload_images/20725105-90cc03e92640e22e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5.png" loading="lazy"></figure>
+<ul>
+<li>
+<h5 id="给所有基因作图并分面显示">给所有基因作图并分面显示</h5>
+</li>
+</ul>
+<p>首先进行<code>数据转换</code>，也就是把所有基因全部合并成一列</p>
+<pre><code class="language-r">library(tidyr)
+library(reshape2)
+mydata&lt;-melt(group,                       #待转换的数据集名称
+       id.vars=c(&quot;sample&quot;,&quot;primary_site&quot;,&quot;type&quot;),  #要保留的主字段
+       variable.name=&quot;Group&quot;,         #转换后的分类字段名称（维度）
+       value.name=&quot;value&quot;             #转换后的度量值名称
+       )
+</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/20725105-e989b800309d9d3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="6.png" loading="lazy"><br>
+所有基因作图并<code>分面</code></p>
+<pre><code class="language-{r}">ggplot(mydata, aes(type,value,color=type)) #可以用color，也可以用fill
++geom_boxplot() #作图
++geom_jitter() #加点
++facet_wrap(~Group, scales = &quot;free&quot;) #分面，~后面接长数据表头，scales表示单独分面，如果不设置则默认所有数据按值一起分面
++geom_signif(comparisons = list(c(&quot;Normal&quot;,&quot;Tumor&quot;))) #显著性标记
++theme_bw() #设置背景
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="https://upload-images.jianshu.io/upload_images/20725105-94190dd33e4f13ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7.png" loading="lazy"></figure>
+<h2 id="二-ggpurb作图-简单">二、ggpurb作图 （简单）</h2>
+<pre><code class="language-{r}">ggboxplot(mydata,&quot;type&quot;,&quot;value&quot;,color = &quot;type&quot;,#记得有引号
+palette = &quot;ncp&quot;,#有各种杂志风格，如“npg&quot;, &quot;aaas&quot;, &quot;lancet&quot;, &quot;jco&quot;, &quot;ucscgb&quot;, &quot;uchicago&quot;, &quot;simpsons&quot; 和 &quot;rickandmorty&quot;.
+add = &quot;jitter&quot;,shape=&quot;type&quot;, #加点，按类型分不同的点
+facet.by = &quot;Group&quot;,scale=&quot;free&quot;) #分面
++stat_compare_means(method = &quot;t.test&quot;) #加统计显著，括号里不填默认是非参数检验
+</code></pre>
+<figure data-type="image" tabindex="7"><img src="https://upload-images.jianshu.io/upload_images/20725105-e8803272a04a15af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8.png" loading="lazy"></figure>
+<pre><code class="language-{r}">ggboxplot(mydata,&quot;type&quot;,&quot;value&quot;,color = &quot;type&quot;,#记得有引号
+palette = &quot;ncp&quot;,#有各种杂志风格，如“npg&quot;, &quot;aaas&quot;, &quot;lancet&quot;, &quot;jco&quot;, &quot;ucscgb&quot;, &quot;uchicago&quot;, &quot;simpsons&quot; 和 &quot;rickandmorty&quot;.
+add = &quot;jitter&quot;,shape=&quot;type&quot;, #加点，按类型分不同的点
+facet.by = &quot;Group&quot;,scale=&quot;free&quot;) #分面
++stat_compare_means() #加统计显著，括号里不填默认是非参数检验
+</code></pre>
+<figure data-type="image" tabindex="8"><img src="https://upload-images.jianshu.io/upload_images/20725105-e8d66acb6a7dfa3f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9.png" loading="lazy"></figure>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://swcyo.github.io/post/r-an-zhuang-github-bao/">
+                  <h3 class="post-title">
+                    R安装Github包
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>
